@@ -8,22 +8,23 @@ const Button = ({handleEvent, text}) => {
 
 const Statistics = (props) => {
   return(
-    <div>
+    <table>
       <StatisticLine text='good' value={props.good}/>
       <StatisticLine text='neutral' value={props.neutral}/>
       <StatisticLine text='bad' value={props.bad}/>
       <StatisticLine text='total' value={props.total}/>
       <StatisticLine text='average' value={props.average}/>
       <StatisticLine text='positive' value={props.positive}/>
-    </div>
+    </table>
   )
 }
 
 const StatisticLine = ({text, value}) => {
   return(
-    <p>
-      {text}: {value}
-    </p>
+    <tr>
+      <td>{text}:</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
@@ -63,9 +64,7 @@ const App = () => {
       {total === 0 ? (
         <p>No feedback given</p>
       ) : (
-        <div>
           <Statistics good={good} bad={bad} neutral={neutral} total={total} average={average()} positive={positive()}/>
-        </div>
       )}
     </div>
   )
