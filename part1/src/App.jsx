@@ -1,5 +1,19 @@
 import { useState } from 'react'
 
+const Button = ({handleEvent, text}) => {
+  return(
+    <button onClick={handleEvent}>{text}</button>
+  )
+}
+
+const Statistics = ({text, value}) => {
+  return(
+    <p>
+      {text}: {value}
+    </p>
+  )
+}
+
 const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
@@ -21,24 +35,23 @@ const App = () => {
     setTotal(total + 1)
   }
 
-  const average = () => ((good) + (neutral * 0) + (bad * -1)) / total
-
+  const average = () => ((good) + (neutral * 0) + (bad * -1)) / total + ' %'
 
   const positive = () => (good / (total)) * 100
 
   return (
     <div>
       <h1>give feedback</h1>
-      <button onClick={handleGood} >good</button>
-      <button onClick={handleNeutral} >neutral</button>
-      <button onClick={handleBad} >bad</button>
+      <Button handleEvent={handleGood} text='good'/>
+      <Button handleEvent={handleNeutral} text='neutral'/>
+      <Button handleEvent={handleBad} text='bad'/>
       <h1>statistics</h1>
-      <p>good: {good}</p>
-      <p>neutral: {neutral}</p>
-      <p>bad: {bad}</p>
-      <p>total: {total}</p>
-      <p>average: {average()}</p>
-      <p>positive: {positive()} %</p>
+      <Statistics text='good' value={good}/>
+      <Statistics text='neutral' value={neutral}/>
+      <Statistics text='bad' value={bad}/>
+      <Statistics text='total' value={total}/>
+      <Statistics text='average' value={average()}/>
+      <Statistics text='positive' value={positive()}/>
     </div>
   )
 }
