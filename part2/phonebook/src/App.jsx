@@ -1,5 +1,43 @@
 import { useState } from 'react'
 
+const Filter = (props) => {
+  return(
+    <div>
+          filter shown with: <input value={props.value} onChange={props.onChange}/>
+    </div>
+  )
+}
+
+const PersonForm = ({ handleNewNames, newName, newNumber, handleNameChange, handleNumberChange }) => {
+  return(
+    <form onSubmit={handleNewNames}>
+      <div>
+        name: <input value={newName} onChange={handleNameChange}/>
+      </div>
+      <div>
+        number: <input value={newNumber} onChange={handleNumberChange}/>
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+const Persons = (props) => {
+  return(
+    props.nameFilter === '' ? (
+      props.persons.map(person => 
+        <p key={person.name}>{person.name} {person.number}</p>
+      )
+    ) : (
+      props.filteredPersons.map(person => 
+        <p key={person.name}>{person.name} {person.number}</p>
+      )
+    )
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -11,7 +49,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
   const [filteredPersons, setFilteredPersons] = useState([])
-  
 
   const handleNewNames = (event) => {
     event.preventDefault()
@@ -43,34 +80,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-          filter shown with: <input value={nameFilter} onChange={handleFilterChange}/>
-      </div>
+      <Filter value={nameFilter} onChange={handleFilterChange} />
       <h2>add a new</h2>
-      <form onSubmit={handleNewNames}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm handleNewNames={handleNewNames} newNumber={newNumber} newName={newName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      {nameFilter === '' ? (
-        persons.map(person => 
-          <p key={person.name}>{person.name} {person.number}</p>
-        )
-      ) : (
-        filteredPersons.map(person => 
-          <p key={person.name}>{person.name} {person.number}</p>
-        )
-        
-      )}
-
-      
+      <Persons nameFilter={nameFilter} persons={persons} filteredPersons={filteredPersons} />
     </div>
   )
 }
