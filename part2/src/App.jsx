@@ -6,6 +6,10 @@ const Course = (props) => {
       {props.course.parts.map(element =>
           <p key={element.id}>{element.name} {element.exercises}</p>
       )}
+      <p><b>total of {props.course.parts.reduce((accumulator, currentValue) => 
+        accumulator + currentValue.exercises,
+        0,
+      )} exercises</b></p>
     </div>   
   )
 }
@@ -29,7 +33,12 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
-      }
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4
+      },
     ]
   }
 
