@@ -13,6 +13,7 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(new Uint8Array(8))
 
   const handleRandom = () => {
     const random = Math.floor(Math.random() * 8)
@@ -22,12 +23,18 @@ const App = () => {
     } else {
       handleRandom()
     }
-    console.log(random)
+  }
+
+  const handleVote = () => {
+    const copy = [...votes]
+    copy[selected] += 1
+    setVotes(copy)
   }
 
   return (
     <div>
       <p>{anecdotes[selected]}</p>
+      <button onClick={handleVote}>vote</button>
       <button onClick={handleRandom}>next anecdote</button>
     </div>
   )
