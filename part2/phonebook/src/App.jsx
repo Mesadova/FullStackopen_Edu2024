@@ -9,9 +9,9 @@ const Filter = (props) => {
   )
 }
 
-const PersonForm = ({ handleNewNames, newName, newNumber, handleNameChange, handleNumberChange }) => {
+const PersonForm = ({ handleAddPerson, newName, newNumber, handleNameChange, handleNumberChange }) => {
   return(
-    <form onSubmit={handleNewNames}>
+    <form onSubmit={handleAddPerson}>
       <div>
         name: <input value={newName} onChange={handleNameChange}/>
       </div>
@@ -55,12 +55,21 @@ const App = () => {
       })
   }, [])
 
-  const handleNewNames = (event) => {
+  const handleAddPerson = (event) => {
     event.preventDefault()
     if (persons.some(person => person.name === newName)){
       alert(`${newName} is already added to the phonebook`)
     } else {
-      setPersons(persons.concat({name: newName, number: newNumber}))
+      const personObject = {
+        name: newName,
+        number: newNumber
+      }
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          console.log(response.data)
+        })
     }
     setNewName('')
     setNewNumber('')
@@ -88,7 +97,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter value={nameFilter} onChange={handleFilterChange} />
       <h2>add a new</h2>
-      <PersonForm handleNewNames={handleNewNames} newNumber={newNumber} newName={newName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
+      <PersonForm handleAddPerson={handleAddPerson} newNumber={newNumber} newName={newName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       <Persons nameFilter={nameFilter} persons={persons} filteredPersons={filteredPersons} />
     </div>
