@@ -29,8 +29,9 @@ const PersonForm = ({ handleAddPerson, newName, newNumber, handleNameChange, han
 const Persons = (props) => {
   return(
     props.nameFilter === '' ? (
-      props.persons.map(person => 
-        <p key={person.name}>{person.name} {person.number}</p>
+      props.persons.map(person =>
+        <p key={person.name}>{person.name} {person.number}<button onClick={() => props.deletePerson(person)}>delete</button></p>
+        
       )
     ) : (
       props.filteredPersons.map(person => 
@@ -90,6 +91,18 @@ const App = () => {
     setFilteredPersons(filteredPersonsCopy)
   }
 
+  const deletePerson = (person) => {
+    const personIdDelete = person.id
+    if (window.confirm(`Delete ${person.name}?`)){
+      personService
+        .deletePerson(personIdDelete)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== personIdDelete))
+          setFilteredPersons(persons.filter(person => person.id !== personIdDelete))
+        })
+    }
+  }
+
 
   return (
     <div>
@@ -98,7 +111,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm handleAddPerson={handleAddPerson} newNumber={newNumber} newName={newName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons nameFilter={nameFilter} persons={persons} filteredPersons={filteredPersons} />
+      <Persons nameFilter={nameFilter} persons={persons} filteredPersons={filteredPersons} deletePerson={deletePerson}/>
     </div>
   )
 }

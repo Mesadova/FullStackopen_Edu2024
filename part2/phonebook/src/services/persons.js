@@ -15,4 +15,11 @@ const showAll = () => {
     })
 }
 
-export default {create, showAll}
+const deletePerson = (personIdDelete) => {
+    const personUrlDelete = `${baseUrl}/${personIdDelete}`
+    const request = axios.delete(personUrlDelete)
+        return request.then(response => {
+            return response.data
+        })
+}
+export default {create, showAll, deletePerson}
