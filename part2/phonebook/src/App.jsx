@@ -30,12 +30,12 @@ const Persons = (props) => {
   return(
     props.nameFilter === '' ? (
       props.persons.map(person =>
-        <p key={person.name}>{person.name} {person.number}<button onClick={() => props.deletePerson(person)}>delete</button></p>
+        <p key={person.id}>{person.name} {person.number}<button onClick={() => props.deletePerson(person)}>delete</button></p>
         
       )
     ) : (
       props.filteredPersons.map(person => 
-        <p key={person.name}>{person.name} {person.number}</p>
+        <p key={person.id}>{person.name} {person.number}</p>
       )
     )
   )
@@ -59,7 +59,18 @@ const App = () => {
   const handleAddPerson = (event) => {
     event.preventDefault()
     if (persons.some(person => person.name === newName)){
-      alert(`${newName} is already added to the phonebook`)
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+        const personNewNumber = persons.find(person => person.name === newName)
+        const personObject = { ...personNewNumber, number: newNumber}
+        personService
+          .update(personNewNumber.id, personObject)
+          .then(returnedPerson => {
+            setPersons(persons.map(a => a.id === personNewNumber.id ? returnedPerson : a))
+            setFilteredPersons(filteredPersons.map(a => a.id === personNewNumber.id ? returnedPerson : a))
+          })
+      } else {
+        alert(`${newName} is already added to the phonebook`)
+      }
     } else {
       const personObject = {
         name: newName,
