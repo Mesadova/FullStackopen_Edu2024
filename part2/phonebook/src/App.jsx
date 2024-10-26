@@ -2,6 +2,27 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
+const Notification = ({ message }) => {
+  const successStyle = {
+    color: 'green',
+    background: 'lightgreen',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div style={successStyle}>
+      {message}
+    </div>
+  )
+}
+
 const Filter = (props) => {
   return(
     <div>
@@ -42,6 +63,7 @@ const Persons = (props) => {
 }
 
 const App = () => {
+  const [successMessage, setSuccessMessage] = useState(null)
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -80,6 +102,10 @@ const App = () => {
         .create(personObject)
         .then(addedPerson => {
           setPersons(persons.concat(addedPerson))
+          setSuccessMessage(`Added ${newName}`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
         })
     }
     setNewName('')
@@ -120,6 +146,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter value={nameFilter} onChange={handleFilterChange} />
       <h2>add a new</h2>
+      <Notification message={successMessage} />
       <PersonForm handleAddPerson={handleAddPerson} newNumber={newNumber} newName={newName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       <Persons nameFilter={nameFilter} persons={persons} filteredPersons={filteredPersons} deletePerson={deletePerson}/>
