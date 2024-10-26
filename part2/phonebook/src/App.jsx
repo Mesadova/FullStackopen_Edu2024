@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-const Notification = ({ message }) => {
+const Notification = ({ successMessage, errorMessage }) => {
   const successStyle = {
     color: 'green',
     background: 'lightgreen',
@@ -12,15 +12,21 @@ const Notification = ({ message }) => {
     padding: 10,
     marginBottom: 10
   }
-  if (message === null) {
-    return null
+  const errorStyle = {
+    color: 'red',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
   }
 
   return (
-    <div style={successStyle}>
-      {message}
-    </div>
-  )
+    successMessage !== null ? <div style={successStyle}>{successMessage}</div>
+    : errorMessage !== null ? <div style={errorStyle}>{errorMessage}</div>
+    : null 
+    ) 
 }
 
 const Filter = (props) => {
@@ -56,7 +62,7 @@ const Persons = (props) => {
       )
     ) : (
       props.filteredPersons.map(person => 
-        <p key={person.id}>{person.name} {person.number}</p>
+        <p key={person.id}>{person.name} {person.number}<button onClick={() => props.deletePerson(person)}>delete</button></p>
       )
     )
   )
@@ -64,7 +70,8 @@ const Persons = (props) => {
 
 const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
-  const [persons, setPersons] = useState([]) 
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
@@ -90,6 +97,12 @@ const App = () => {
             setPersons(persons.map(a => a.id === personNewNumber.id ? returnedPerson : a))
             setFilteredPersons(filteredPersons.map(a => a.id === personNewNumber.id ? returnedPerson : a))
           })
+          .catch(error => {
+            setErrorMessage(`Information of ${newName} has already been removed from server`)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
       } else {
         alert(`${newName} is already added to the phonebook`)
       }
@@ -112,14 +125,6 @@ const App = () => {
     setNewNumber('')
   }
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
-
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
-
   const handleFilterChange = (event) => {
     const updatedSearch = event.target.value
     setNameFilter(updatedSearch)
@@ -136,18 +141,19 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== personIdDelete))
           setFilteredPersons(persons.filter(person => person.id !== personIdDelete))
+          setNameFilter('')
         })
     }
   }
 
-
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification successMessage={successMessage} errorMessage={errorMessage} />
       <Filter value={nameFilter} onChange={handleFilterChange} />
       <h2>add a new</h2>
-      <Notification message={successMessage} />
-      <PersonForm handleAddPerson={handleAddPerson} newNumber={newNumber} newName={newName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
+      <PersonForm handleAddPerson={handleAddPerson} newNumber={newNumber} newName={newName} 
+        handleNameChange={() => setNewName(event.target.value)} handleNumberChange={() => setNewNumber(event.target.value)}/>
       <h2>Numbers</h2>
       <Persons nameFilter={nameFilter} persons={persons} filteredPersons={filteredPersons} deletePerson={deletePerson}/>
     </div>
